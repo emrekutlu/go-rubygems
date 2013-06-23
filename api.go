@@ -14,12 +14,34 @@ type Api struct {
   host    string
 }
 
-func (self *Api) baseUrl() string {
-  return self.host + "v" + strconv.Itoa(self.version) + "/"
+
+func (self *Api) gem(name string) (Gem, error) {
+  var gem_err error
+  resp, err := self.get("gems/" + name)
+
+  if err != nil {
+    gem_err = err
+  } else {
+    defer resp.Body.Close()
+  }
+
+  body, err := ioutil.ReadAll(resp.Body)
+  if err != nil {
+    gem_err = err
+  }
+
+  var gem Gem
+  json_err := json.Unmarshal(body, &gem)
+
+  if json_err != nil {
+    gem_err = json_err
+  }
+
+  return gem, gem_err
 }
 
-func (self *Api) versions(gemName string) ([]Version) {
-  resp, err := self.client.Get(self.baseUrl() + "versions/" + gemName + ".json")
+func (self *Api) versions(name string) []Version {
+  resp, err := self.get("versions/" + name)
 
   if err != nil {
     log.Fatal(err)
@@ -40,4 +62,16 @@ func (self *Api) versions(gemName string) ([]Version) {
   }
 
   return versions
+}
+
+func (self *Api) baseUrl() string {
+  return self.host + "v" + strconv.Itoa(self.version) + "/"
+}
+
+func (self *Api) url(s string) string {
+  return self.baseUrl() + s + ".json"
+}
+
+func (self *Api) get(urlPart string) (*http.Response, error)  {
+  return self.client.Get(self.url(urlPart))
 }
