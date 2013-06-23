@@ -41,7 +41,6 @@ func (self *Client) versions(gemName string) ([]Version) {
   json_err := json.Unmarshal(body, &versions)
 
   if json_err != nil {
-  log.Fatal(string(self.Version))
     log.Fatal(json_err)
   }
 
