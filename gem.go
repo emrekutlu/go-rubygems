@@ -1,14 +1,13 @@
 package rubygems
 
-var api *Client = NewClient(1, "json")
-
 type Gem struct {
-  api       *Client
+  api       *Api
   Name      string
   versions  []Version
 }
 
 func NewGem(name string) *Gem {
+  api := NewApi(1, "json")
   return &Gem{ Name: name, api: api }
 }
 

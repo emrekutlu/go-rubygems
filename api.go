@@ -1,39 +1,38 @@
 package rubygems
 
 import(
-  "net/http"
   "log"
   "encoding/json"
   "io/ioutil"
   "strconv"
 )
 
-type Client struct {
+type Api struct {
   Version int
   Format  string
 }
 
 const host string = "https://rubygems.org/api/"
 
-func NewClient(version int, format string) *Client {
-  return &Client{ Version: version, Format: format }
+func NewApi(version int, format string) *Api {
+  return &Api{ Version: version, Format: format }
 }
 
-func (self *Client) baseUrl() string {
+func (self *Api) baseUrl() string {
   return host + "v" + strconv.Itoa(self.Version) + "/"
 }
 
-func (self *Client) versions(gemName string) ([]Version) {
-  resp, err := http.Get(self.baseUrl() + "versions/" + gemName + "." + self.Format)
-  defer resp.Body.Close()
+func (self *Api) versions(gemName string) ([]Version) {
+  resp, err := Client.Get(self.baseUrl() + "versions/" + gemName + "." + self.Format)
 
   if err != nil {
     log.Fatal(err)
+  } else {
+    defer resp.Body.Close()
   }
 
   body, err := ioutil.ReadAll(resp.Body)
   if err != nil {
-  log.Fatal("ioutil")
     log.Fatal(err)
   }
 
