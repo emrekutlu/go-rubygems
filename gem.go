@@ -1,18 +1,16 @@
 package rubygems
 
 type Gem struct {
-  api       *Api
   Name      string
   versions  []Version
 }
 
 func NewGem(name string) *Gem {
-  api := NewApi(1, "json")
-  return &Gem{ Name: name, api: api }
+  return &Gem{ Name: name }
 }
 
 func (self *Gem) Versions() []Version {
-  self.versions = self.api.versions(self.Name)
+  self.versions = api.versions(self.Name)
   return self.versions
 }
 

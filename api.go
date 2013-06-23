@@ -5,25 +5,21 @@ import(
   "encoding/json"
   "io/ioutil"
   "strconv"
+  "net/http"
 )
 
 type Api struct {
-  Version int
-  Format  string
-}
-
-const host string = "https://rubygems.org/api/"
-
-func NewApi(version int, format string) *Api {
-  return &Api{ Version: version, Format: format }
+  client  *http.Client
+  version int
+  host    string
 }
 
 func (self *Api) baseUrl() string {
-  return host + "v" + strconv.Itoa(self.Version) + "/"
+  return self.host + "v" + strconv.Itoa(self.version) + "/"
 }
 
 func (self *Api) versions(gemName string) ([]Version) {
-  resp, err := Client.Get(self.baseUrl() + "versions/" + gemName + "." + self.Format)
+  resp, err := self.client.Get(self.baseUrl() + "versions/" + gemName + ".json")
 
   if err != nil {
     log.Fatal(err)

@@ -2,4 +2,8 @@ package rubygems
 
 import "net/http"
 
-var Client *http.Client
+var api *Api
+
+func Initialize(client *http.Client) {
+  api = &Api{ client: client, version: 1, host: "https://rubygems.org/api/" }
+}
