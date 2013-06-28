@@ -11,3 +11,8 @@ type Version struct {
   Description     string
   Prerelease      bool
 }
+
+type TotalDownloadsForVersion struct {
+  Version  int `json:"version_downloads"`
+  Total    int `json:"total_downloads"`
+}

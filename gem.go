@@ -34,27 +34,26 @@ type Gem struct {
 }
 
 func (self *Gem) Get() (*Gem, error) {
-  var gem_err error
   resp, err := api.get("gems/" + self.Name)
 
   if err != nil {
-    gem_err = err
+    return self, err
   } else {
     defer resp.Body.Close()
   }
 
   body, err := ioutil.ReadAll(resp.Body)
   if err != nil {
-    gem_err = err
+    return self, err
   }
 
   json_err := json.Unmarshal(body, &self)
 
   if json_err != nil {
-    gem_err = json_err
+    return self, json_err
   }
 
-  return self, gem_err
+  return self, nil
 }
 
 func (self *Gem) Versions() []Version {
@@ -104,4 +103,29 @@ func (self *Gem) Owners() ([]Owner, error) {
   }
 
   return owners, nil
+}
+
+func (self *Gem) TotalDownloadsForVersion(number string) (*TotalDownloadsForVersion, error) {
+  var totalDownloads TotalDownloadsForVersion
+
+  resp, err := api.get("downloads/" + self.Name + "-" + number)
+
+  if err != nil {
+    return &totalDownloads, err
+  } else {
+    defer resp.Body.Close()
+  }
+
+  body, err := ioutil.ReadAll(resp.Body)
+  if err != nil {
+    return &totalDownloads, err
+  }
+
+  json_err := json.Unmarshal(body, &totalDownloads)
+
+  if json_err != nil {
+    return &totalDownloads, err
+  }
+
+  return &totalDownloads, nil
 }
