@@ -9,5 +9,5 @@ type Version struct {
   DownloadsCount  int `json:"downloads_count"`
   Platform        string
   Description     string
-  prerelease      bool
+  Prerelease      bool
 }

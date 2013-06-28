@@ -5,10 +5,9 @@ import "net/http"
 var api *Api
 
 func Initialize(client *http.Client) {
-  api = &Api{ client: client, version: 1, host: "https://rubygems.org/api/" }
+  api = &Api{ client: client, version: 1, host: "https://rubygems.org/api/", format: "json" }
 }
 
-func NewGem(name string) (*Gem, error) {
-  gem, err := api.gem(name)
-  return &gem, err
+func NewGem(name string) *Gem {
+  return &Gem{ Name: name }
 }

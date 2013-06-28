@@ -1,5 +1,11 @@
 package rubygems
 
+import(
+  "log"
+  "encoding/json"
+  "io/ioutil"
+)
+
 type Gem struct {
   Name              string
   Downloads         int
@@ -27,6 +33,75 @@ type Gem struct {
   }
 }
 
+func (self *Gem) Get() (*Gem, error) {
+  var gem_err error
+  resp, err := api.get("gems/" + self.Name)
+
+  if err != nil {
+    gem_err = err
+  } else {
+    defer resp.Body.Close()
+  }
+
+  body, err := ioutil.ReadAll(resp.Body)
+  if err != nil {
+    gem_err = err
+  }
+
+  json_err := json.Unmarshal(body, &self)
+
+  if json_err != nil {
+    gem_err = json_err
+  }
+
+  return self, gem_err
+}
+
 func (self *Gem) Versions() []Version {
-  return api.versions(self.Name)
+  resp, err := api.get("versions/" + self.Name)
+
+  if err != nil {
+    log.Fatal(err)
+  } else {
+    defer resp.Body.Close()
+  }
+
+  body, err := ioutil.ReadAll(resp.Body)
+  if err != nil {
+    log.Fatal(err)
+  }
+
+  var versions []Version
+  json_err := json.Unmarshal(body, &versions)
+
+  if json_err != nil {
+    log.Fatal(json_err)
+  }
+
+  return versions
+}
+
+func (self *Gem) Owners() ([]Owner, error) {
+  var owners []Owner
+
+  resp, err := api.get("gems/" + self.Name + "/owners")
+
+  if err != nil {
+    return owners, err
+  } else {
+    defer resp.Body.Close()
+  }
+
+  body, err := ioutil.ReadAll(resp.Body)
+  if err != nil {
+    return owners, err
+  }
+
+  json_err := json.Unmarshal(body, &owners)
+
+  if json_err != nil {
+    return owners, err
+  }
+
+  return owners, nil
 }
