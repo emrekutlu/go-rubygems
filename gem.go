@@ -47,10 +47,10 @@ func (self *Gem) Get() (*Gem, error) {
     return self, err
   }
 
-  json_err := json.Unmarshal(body, &self)
+  err = json.Unmarshal(body, &self)
 
-  if json_err != nil {
-    return self, json_err
+  if err != nil {
+    return self, err
   }
 
   return self, nil
